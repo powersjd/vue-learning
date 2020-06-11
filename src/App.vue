@@ -4,7 +4,7 @@
             <AppNavigation></AppNavigation>
         </v-card>
         <v-content transition="slide-x-transition">
-        <router-view />
+            <router-view />
         </v-content>
         <v-card tile>
             <Footer></Footer>
@@ -17,10 +17,10 @@ import AppNavigation from "@/components/topbottom/AppNavigation.vue";
 import Footer from "@/components/topbottom/Footer.vue";
 /* eslint-disable */
 export default {
-  name: "App",
-  components: {
-    AppNavigation,
-    Footer
-  }
+    name: "App",
+    components: {
+        AppNavigation,
+        Footer
+    }
 };
 </script>

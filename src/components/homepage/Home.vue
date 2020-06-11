@@ -42,9 +42,9 @@ export default {
                     link: "/safesearch"
                 },
                 card2: {
-                    title: "test card 2",
-                    content: "test card 2",
-                    link: "/"
+                    title: "User Management",
+                    content: "This is a portal to look into user management of firebase users.  Assign specific roles to each user.",
+                    link: "/usermanagement"
                 },
                 card3: {
                     title: "test3",

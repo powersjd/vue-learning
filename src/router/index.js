@@ -3,6 +3,7 @@ import VueRouter from "vue-router";
 import Login from "../views/login/Login.vue";
 import Home from "../views/homepage/Home.vue";
 import SafeSearch from "../components/testingpages/safesearch/Safesearch.vue";
+import UserManagement from "../components/testingpages/usermanagement/UserManagement.vue";
 
 Vue.use(VueRouter);
 
@@ -21,7 +22,13 @@ const routes = [
         path: "/safesearch",
         name: "Safe Search",
         component: SafeSearch
+    },
+    {
+        path: "/usermanagement",
+        name: "User Management",
+        component: UserManagement
     }
+
 
 ];
 
