@@ -2,10 +2,11 @@
     <v-container>
         <v-layout>
             <v-flex>
-                <v-data-table :headers="headers" :items="userdata" :items-per-page="5" dark class="elevation-1 mb-2" @click:row="handleRowClick"></v-data-table>
+                <v-data-table :loading="dumpButtonLoading" loading-text="Loading... Please Wait" :headers="headers" :items="userdata" :items-per-page="5" dark class="elevation-1 mb-2" @click:row="handleRowClick"></v-data-table>
                 <v-layout row>
                     <v-spacer></v-spacer>
-                    <v-btn rounded outlined color="#72deff" v-on:click="this.getAllUsers">Click me to dump users</v-btn>
+                    <v-btn :loading="dumpButtonLoading" rounded outlined color="#72deff" v-on:click="this.getAllUsers">Click me to dump users</v-btn>
+                    <v-btn v-on:click="this.getToken">Get Token</v-btn>
                     <v-spacer></v-spacer>
                 </v-layout>
             </v-flex>
@@ -24,7 +25,7 @@
                     <v-spacer></v-spacer>
                     <strong>User: </strong>{{ this.currentUser }}
                     <v-spacer></v-spacer>
-                    <v-layout row>
+                    <v-layout column>
                         <v-checkbox v-model="adminCheckbox" :label="`Set Admin: ${adminCheckbox.toString()}`"></v-checkbox>
                         <v-checkbox v-model="modCheckbox" :label="`Set Moderator: ${modCheckbox.toString()}`"></v-checkbox>
                         <v-checkbox v-model="userCheckbox" :label="`Set User: ${userCheckbox.toString()}`"></v-checkbox>
@@ -34,7 +35,7 @@
                         <v-spacer></v-spacer>
                         <v-btn rounded outlined color="#72deff" v-on:click="hideDialog">Close</v-btn>
                         <v-spacer></v-spacer>
-                        <v-btn rounded outlined color="#1eb980" v-on:click="updateUser">Update!</v-btn>
+                        <v-btn :loading="updateButtonLoading" rounded outlined color="#1eb980" v-on:click="updateUser">Update!</v-btn>
                         <v-spacer></v-spacer>
                     </v-layout>
                     
@@ -46,6 +47,7 @@
 
 <script>
 import axios from 'axios';
+import firebase from 'firebase';
 
 export default {
     name: "UserManagement",
@@ -65,12 +67,17 @@ export default {
             currentAdmin: "",
             currentMod: "",
             currentUser: "",
-            adminCheckbox: false,
-            modCheckbox: false,
-            userCheckbox: false,
+            adminCheckbox: "",
+            modCheckbox: "",
+            userCheckbox: "",
+            dumpButtonLoading: false,
+            updateButtonLoading: false,
         }
     },
     methods: {
+        getToken: function() {
+            console.log(firebase.auth().currentUser)
+        },
         handleRowClick: function(value) {
             this.userDialog = true
             this.currentEmail = value.email
@@ -78,21 +85,36 @@ export default {
             this.currentAdmin = value.admin
             this.currentMod = value.moderator
             this.currentUser = value.user
-            this.adminCheckbox = value.admin
-            this.modCheckbox = value.moderator
-            this.userCheckbox = value.user
+            if(this.currentAdmin === "false"){
+                this.adminCheckbox = false
+            }else{
+                this.adminCheckbox = true
+            }
+            if(this.currentMod === "false"){
+                this.modCheckbox = false
+            }else{
+                this.modCheckbox = true
+            }
+            if(this.currentUser === "false"){
+                this.userCheckbox = false
+            }else{
+                this.userCheckbox = true
+            }
         },
         hideDialog: function() {
             this.userDialog = false
         },
         updateUser: function() {
+            this.updateButtonLoading = true
             axios.post(`http://localhost:8081/UpdateClaims?email=${this.currentEmail}&admin=${this.adminCheckbox}&moderator=${this.modCheckbox}&user=${this.userCheckbox}`)
             .then(() => {
                 this.getAllUsers()
                 this.hideDialog()
+                this.updateButtonLoading = false
             })
         },
         getAllUsers: function() {
+            this.dumpButtonLoading = true
             this.userdata = []
             axios.get('http://localhost:8081/GetAllUsers')
             .then(data => {
@@ -106,6 +128,7 @@ export default {
                         user : users[i].customClaims.user
                     })
                 }
+                this.dumpButtonLoading = false
             })
         }
     }

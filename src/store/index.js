@@ -6,14 +6,15 @@ Vue.use(Vuex);
 export default new Vuex.Store({
     state: {
         user: {
-        loggedIn: false,
-        data: null
+            loggedIn: false,
+            data: null
         }
     },
     getters: {
         user(state) {
-        return state.user
+            return state.user
         }
+        
     },
     mutations: {
         SET_LOGGED_IN (state, value) {

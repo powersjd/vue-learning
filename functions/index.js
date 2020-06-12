@@ -8,6 +8,26 @@ admin.initializeApp(functions.config().firebase);
 
 const db = admin.firestore();
 
+exports.AdminAccess = functions.https.onRequest(async (req, res) => {
+    await admin.auth().(req.query.token).then((claims) => {
+        if (claims.admin === true) {
+            res.status(200).send("Welcome aboard admin")
+        } else {
+            res.status(401).send("You are not allowed to be here!")
+        }
+    })
+})
+
+exports.ModAccess = functions.https.onRequest(async (req, res) => {
+    await admin.auth().verifyIdToken(req.query.token).then((claims) => {
+        if (claims.moderator === true) {
+            res.status(200).send("Welcome aboard moderator!")
+        } else {
+            res.status(401).send("You are not allowed to be here!");
+        }
+    })
+})
+
 exports.GetAllUsers = functions.https.onRequest(async (req, res) => {
     function listAllUsers(nextPageToken) {
         admin.auth().listUsers(1000, nextPageToken)
